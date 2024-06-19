@@ -41,6 +41,47 @@ function formValidationHandler() {
         addressValidator()
     );
 }
+function fillFormAgainUsingTempData(dataObj) {
+
+    //userName
+    if (dataObj?.username) {
+
+
+        dataObj.username.value = localStorage.getItem('temp_username');
+    }
+
+    if (dataObj?.email) {
+        dataObj.email.value = localStorage.getItem('temp_Email');
+    }
+    if (dataObj?.password) {
+        dataObj.email.value = localStorage.getItem('temp_Password')
+    }
+    if (dataObj?.confirmPassWord) {
+        dataObj.confirmPassWord.value = localStorage.getItem('temp_confirmPassWord')
+    }
+    if (dataObj?.dob) {
+        dataObj.dob.value = localStorage.getItem('temp_dob');
+    }
+
+    if (dataObj?.phone) {
+        dataObj.phone.value = localStorage.getItem('temp_phone')
+    }
+    if (dataObj?.address) {
+        let addressObj = localStorage.getItem('temp_address')
+
+        if (addressObj !== '' &&  addressObj?.address && addressObj?.street && addressObj?.city && addressObj?.zipCode) {
+            addressObj = JSON.parse(addressObj)
+
+            dataObj.address.value = addressObj?.address;
+            dataObj.street.value = addressObj?.street;
+            dataObj.city.value = addressObj?.city;
+            dataObj.zipCode.value = addressObj?.zipCode;
+        }
+
+    }
+
+
+}
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('form');
 
@@ -59,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         state: document.getElementById("state"),
         zipCode: document.getElementById("zipCode")
     };
+    fillFormAgainUsingTempData(dataObj);
 
 
 
@@ -102,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         hideError("Username");
-
+        localStorage.setItem('temp_username', username)
         return true;
     }
 
@@ -117,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return false;
         } else {
             hideError('Email');
+            localStorage.setItem('temp_Email', email)
             return true;
         }
     }
@@ -182,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         hideError("PassWord");
+        localStorage.setItem('temp_Password', password)
         return true;
     }
     function confirmPasswordValidator() {
@@ -193,6 +237,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return false
         }
         hideError('confirmPassWord')
+        localStorage.setItem('temp_confirmPassWord', password)
+        return true;
 
     }
 
@@ -203,6 +249,8 @@ document.addEventListener('DOMContentLoaded', function () {
             showError("phone", "InValid ");
             return false;
         }
+        hideError('phone')
+        localStorage.setItem('temp_phone', phoneNumber)
         return true
     }
 
@@ -220,6 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         hideError('dob');
+        localStorage.setItem('temp_dob', dob)
         return true;
     }
 
@@ -260,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         hideAddressError()
 
+        localStorage.setItem('temp_address', JSON.stringify(addressObj))
         return true
 
     }
@@ -281,6 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         if (formValidationHandler()) {
             alert('Form submitted successfully!');
+            localStorage.clear();
             localStorage.setItem('userInfo', JSON.stringify(dataObj));
             console.table("saved userInfo", dataObj);
             form.reset();
@@ -292,19 +343,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
 const Icons = document.querySelectorAll('.toggle-password');
 
-Icons.forEach(function(icon) {
-  icon.addEventListener('click', function() {
-    const targetId = this.getAttribute('data-target');
-    const targetInput = document.getElementById(targetId);
+Icons.forEach(function (icon) {
+    icon.addEventListener('click', function () {
+        const targetId = this.getAttribute('data-target');
+        const targetInput = document.getElementById(targetId);
 
-    if (targetInput.getAttribute('type') === 'password') {
-      targetInput.setAttribute('type', 'text');
-      this.classList.remove('fa-eye-slash');
-      this.classList.add('fa-eye');
-    } else {
-      targetInput.setAttribute('type', 'password');
-      this.classList.remove('fa-eye');
-      this.classList.add('fa-eye-slash');
-    }
-  });
+        if (targetInput.getAttribute('type') === 'password') {
+            targetInput.setAttribute('type', 'text');
+            this.classList.remove('fa-eye-slash');
+            this.classList.add('fa-eye');
+        } else {
+            targetInput.setAttribute('type', 'password');
+            this.classList.remove('fa-eye');
+            this.classList.add('fa-eye-slash');
+        }
+    });
 });
